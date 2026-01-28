@@ -1,5 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
+import { cors } from "hono/cors"; // 追加
 
 interface Todo {
   id: number;
@@ -10,6 +11,13 @@ interface Todo {
 const todos: Todo[] = [];
 
 const app = new Hono();
+
+// 追加
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
@@ -30,7 +38,6 @@ app.post("/todos", async (c) => {
   return c.json({ todo });
 });
 
-// 追加
 app.put("/todos/:id", async (c) => {
   const { id } = c.req.param();
   const { completed } = await c.req.json();
